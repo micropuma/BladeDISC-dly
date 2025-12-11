@@ -1591,6 +1591,7 @@ bool StitchCpuFusionStrategy::initFusionPattern(ShapeAnalysis& shapeAnalysis,
   return true;
 }
 
+// a factory method for fusionstrategy generation
 std::unique_ptr<FusionStrategy> makeNewDeviceStrategy(StringRef device,
                                                       StringRef strategy) {
   auto& options = getGlobalFusionOptions();
@@ -1703,6 +1704,7 @@ bool PlacementAwareFusionStrategy::pruneFusionPattern(
                                                   excluded_ops);
 }
 
+// Fusion strategy when memory is bind to devices
 std::unique_ptr<FusionStrategy> makeNewPlacementAwareFusionStrategy(
     bool gpu_enabled, StringRef fusion_strategy) {
   DeviceStrategyMap deviceStrategyMap;

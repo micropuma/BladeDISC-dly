@@ -222,6 +222,7 @@ struct DiscDuplicateComputationForFusionPass
 // Returns true if the value produced by a cheap computation.
 // Here "cheap" means duplication of such computation would not hurt
 // performance.
+// Fusion is applied after bufferization. Thus we only consider MemRef values here.
 bool isCheapComputation(Value value) {
   auto ty = value.getType().dyn_cast<MemRefType>();
   if (!ty) return false;
@@ -279,9 +280,26 @@ bool isCheapComputation(Value value) {
 //  optimization (if enabled, we will do shape prpagation egaerly, and may
 //  further enable cross layer CSE, which in turn increases the chance of the
 //  occurrence of the above pattern).
+
+// A straightforward pattern-matching utility.
+//
+// This function detects the following IR structure:
+//
+//   %1 -> %2 = broadcast(%1)
+//        -> %3 = cal1(%2)
+//        -> dot … (fusion break)
+//        -> %4 = cal2(%2)
+//
+// The transformation is applicable only when:
+//   (1) `cal2` is fusible, and
+//   (2) the operand `%1` is considered cheap to recompute.
+//
+// If these conditions hold, the pass may duplicate the broadcast op
+// to enable better fusion opportunities downstream.
 LogicalResult DiscDuplicateComputationForFusionPass::duplicateBroadcastInDimOp(
     FuncOp func, FusionStrategy& strategy) {
   SmallVector<Operation*> ops;
+
   func->walk([&](Operation* op) {
     if (isa<lmhlo::BroadcastOp, lmhlo::BroadcastInDimOp,
             lmhlo::DynamicBroadcastInDimOp>(op)) {
@@ -321,6 +339,9 @@ DiscDuplicateComputationForFusionPass::duplicateConstWeightForDotOp(
     } else {
     }
   });
+
+  // simply check if the weight has other users except dot general op and
+  // constant op. If yes, duplicate the weight for dot general op.
   for (lmhlo::DotGeneralOp dotOp : dotOps) {
     Value weight = dotOp.getRhs();
     Value rootWeightMemref = getRootMemRef(weight);
@@ -328,6 +349,7 @@ DiscDuplicateComputationForFusionPass::duplicateConstWeightForDotOp(
     Operation* constOp = nullptr;
     for (Operation* user : getValueUsers(rootWeightMemref)) {
       if (user == dotOp.getOperation()) continue;
+      // lmhlo::ConstantOp can be used to initialize the weight buffer.
       if (isa<lmhlo::ConstantOp>(user)) {
         if (constOp)
           return dotOp->emitError()
