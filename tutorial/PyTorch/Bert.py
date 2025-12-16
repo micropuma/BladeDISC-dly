@@ -1,11 +1,16 @@
 import time
 import torch
+import os
+
 from transformers import (
     pipeline,
     AutoTokenizer,
     AutoModelForSequenceClassification,
     TextClassificationPipeline,
 )
+
+os.environ["TORCH_DISC_USE_TORCH_MLIR"] = "true"
+os.environ["DISC_ENABLE_STITCH"] = "true"
 
 # ======== 1. 加载模型与分词器 ========
 model_name = "nlptown/bert-base-multilingual-uncased-sentiment"
