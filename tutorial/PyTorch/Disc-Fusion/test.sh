@@ -1,0 +1,2 @@
+DISC_ENABLE_SHAPE_CONSTRAINT_IR=1 DISC_ENABLE_HORIZONTAL_FUSION=1 ../disc-opt -pass-pipeline='builtin.module(func.func(disc-fusion{gpu-enabled=true fusion-strategy=base}))' -split-input-file ./test1.mlir -o test1.result && \
+DISC_ENABLE_SHAPE_CONSTRAINT_IR=1 DISC_ENABLE_HORIZONTAL_FUSION=1 ../disc-opt -pass-pipeline='builtin.module(func.func(disc-fusion{gpu-enabled=true fusion-strategy=stitch}))' -split-input-file ./test1.mlir -o test1_stitch.result

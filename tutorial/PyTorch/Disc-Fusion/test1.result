@@ -1,0 +1,441 @@
+module {
+  func.func @simple_kloop_fusion(%arg0: memref<?x?xf32, #gpu.address_space<global>>, %arg1: memref<?x?xf32, #gpu.address_space<global>>, %arg2: memref<?x?xf32, #gpu.address_space<global>>, %arg3: memref<?x?xf32, #gpu.address_space<global>>) -> memref<?x?xf32, #gpu.address_space<global>> {
+    %c0 = arith.constant 0 : index
+    %dim = memref.dim %arg0, %c0 : memref<?x?xf32, #gpu.address_space<global>>
+    %c1 = arith.constant 1 : index
+    %dim_0 = memref.dim %arg0, %c1 : memref<?x?xf32, #gpu.address_space<global>>
+    %reinterpret_cast = memref.reinterpret_cast %arg0 to offset: [0], sizes: [%dim, %dim_0], strides: [%dim_0, 1] {kDiscSymbolicDimAttr = [@S0, @S1]} : memref<?x?xf32, #gpu.address_space<global>> to memref<?x?xf32, #gpu.address_space<global>>
+    %reinterpret_cast_1 = memref.reinterpret_cast %arg1 to offset: [0], sizes: [%dim, %dim_0], strides: [%dim_0, 1] {kDiscSymbolicDimAttr = [@S0, @S1]} : memref<?x?xf32, #gpu.address_space<global>> to memref<?x?xf32, #gpu.address_space<global>>
+    %reinterpret_cast_2 = memref.reinterpret_cast %arg2 to offset: [0], sizes: [%dim, %dim_0], strides: [%dim_0, 1] {kDiscSymbolicDimAttr = [@S0, @S1]} : memref<?x?xf32, #gpu.address_space<global>> to memref<?x?xf32, #gpu.address_space<global>>
+    %reinterpret_cast_3 = memref.reinterpret_cast %arg3 to offset: [0], sizes: [%dim, %dim_0], strides: [%dim_0, 1] {kDiscSymbolicDimAttr = [@S0, @S1]} : memref<?x?xf32, #gpu.address_space<global>> to memref<?x?xf32, #gpu.address_space<global>>
+    "lmhlo.fusion"() ({
+      "lmhlo.abs"(%reinterpret_cast, %reinterpret_cast_1) : (memref<?x?xf32, #gpu.address_space<global>>, memref<?x?xf32, #gpu.address_space<global>>) -> ()
+      "lmhlo.add"(%reinterpret_cast_1, %reinterpret_cast_2, %reinterpret_cast_3) : (memref<?x?xf32, #gpu.address_space<global>>, memref<?x?xf32, #gpu.address_space<global>>, memref<?x?xf32, #gpu.address_space<global>>) -> ()
+      "lmhlo.terminator"() : () -> ()
+    }) {disc.device = "gpu", disc.fusion.name = "simple_kloop_fusion_kLoop_add__2_1_0", disc.fusion_type = "kLoop"} : () -> ()
+    return %reinterpret_cast_3 : memref<?x?xf32, #gpu.address_space<global>>
+  }
+  "disc_shape.SymbolicDim"() {knownNegativeOne = false, knownNonNegative = true, knownNonSizeOne = false, knownNonSizeZero = false, sym_name = "S0", value = -9223372036854775808 : i64} : () -> ()
+  "disc_shape.SymbolicDim"() {knownNegativeOne = false, knownNonNegative = true, knownNonSizeOne = false, knownNonSizeZero = false, sym_name = "S1", value = -9223372036854775808 : i64} : () -> ()
+  func.func @shape_constraint_graph() {
+    return
+  }
+}
+
+
+// -----
+module {
+  func.func @simple_multi_output_kloop_fusion(%arg0: memref<?x?xf32, #gpu.address_space<global>>, %arg1: memref<?x?xf32, #gpu.address_space<global>>, %arg2: memref<?x?xf32, #gpu.address_space<global>>, %arg3: memref<?x?xf32, #gpu.address_space<global>>) -> (memref<?x?xf32, #gpu.address_space<global>>, memref<?x?xf32, #gpu.address_space<global>>) {
+    %c0 = arith.constant 0 : index
+    %dim = memref.dim %arg0, %c0 : memref<?x?xf32, #gpu.address_space<global>>
+    %c1 = arith.constant 1 : index
+    %dim_0 = memref.dim %arg0, %c1 : memref<?x?xf32, #gpu.address_space<global>>
+    %reinterpret_cast = memref.reinterpret_cast %arg0 to offset: [0], sizes: [%dim, %dim_0], strides: [%dim_0, 1] {kDiscSymbolicDimAttr = [@S0, @S1]} : memref<?x?xf32, #gpu.address_space<global>> to memref<?x?xf32, #gpu.address_space<global>>
+    %reinterpret_cast_1 = memref.reinterpret_cast %arg1 to offset: [0], sizes: [%dim, %dim_0], strides: [%dim_0, 1] {kDiscSymbolicDimAttr = [@S0, @S1]} : memref<?x?xf32, #gpu.address_space<global>> to memref<?x?xf32, #gpu.address_space<global>>
+    %reinterpret_cast_2 = memref.reinterpret_cast %arg2 to offset: [0], sizes: [%dim, %dim_0], strides: [%dim_0, 1] {kDiscSymbolicDimAttr = [@S0, @S1]} : memref<?x?xf32, #gpu.address_space<global>> to memref<?x?xf32, #gpu.address_space<global>>
+    %reinterpret_cast_3 = memref.reinterpret_cast %arg3 to offset: [0], sizes: [%dim, %dim_0], strides: [%dim_0, 1] {kDiscSymbolicDimAttr = [@S0, @S1]} : memref<?x?xf32, #gpu.address_space<global>> to memref<?x?xf32, #gpu.address_space<global>>
+    "lmhlo.fusion"() ({
+      "lmhlo.abs"(%reinterpret_cast, %reinterpret_cast_1) : (memref<?x?xf32, #gpu.address_space<global>>, memref<?x?xf32, #gpu.address_space<global>>) -> ()
+      "lmhlo.add"(%reinterpret_cast_1, %reinterpret_cast_2, %reinterpret_cast_3) : (memref<?x?xf32, #gpu.address_space<global>>, memref<?x?xf32, #gpu.address_space<global>>, memref<?x?xf32, #gpu.address_space<global>>) -> ()
+      "lmhlo.terminator"() : () -> ()
+    }) {disc.device = "gpu", disc.fusion.name = "simple_multi_output_kloop_fusion_kLoop_abs_add__2_2_0", disc.fusion_type = "kLoop"} : () -> ()
+    return %reinterpret_cast_1, %reinterpret_cast_3 : memref<?x?xf32, #gpu.address_space<global>>, memref<?x?xf32, #gpu.address_space<global>>
+  }
+  "disc_shape.SymbolicDim"() {knownNegativeOne = false, knownNonNegative = true, knownNonSizeOne = false, knownNonSizeZero = false, sym_name = "S0", value = -9223372036854775808 : i64} : () -> ()
+  "disc_shape.SymbolicDim"() {knownNegativeOne = false, knownNonNegative = true, knownNonSizeOne = false, knownNonSizeZero = false, sym_name = "S1", value = -9223372036854775808 : i64} : () -> ()
+  func.func @shape_constraint_graph() {
+    return
+  }
+}
+
+
+// -----
+module {
+  func.func @simple_multi_output_kloop_fusion_with_reorder(%arg0: memref<?x?xf32, #gpu.address_space<global>>, %arg1: memref<?x?xf32, #gpu.address_space<global>>, %arg2: memref<?x?xf32, #gpu.address_space<global>>, %arg3: memref<?x?xf32, #gpu.address_space<global>>, %arg4: memref<2xindex>, %arg5: memref<?x?xf32, #gpu.address_space<global>>) -> (memref<?x?xf32, #gpu.address_space<global>>, memref<?x?xf32, #gpu.address_space<global>>, memref<?x?xf32, #gpu.address_space<global>>) {
+    %c0 = arith.constant 0 : index
+    %dim = memref.dim %arg5, %c0 : memref<?x?xf32, #gpu.address_space<global>>
+    %dim_0 = memref.dim %arg0, %c0 : memref<?x?xf32, #gpu.address_space<global>>
+    %c1 = arith.constant 1 : index
+    %dim_1 = memref.dim %arg5, %c1 : memref<?x?xf32, #gpu.address_space<global>>
+    %dim_2 = memref.dim %arg0, %c1 : memref<?x?xf32, #gpu.address_space<global>>
+    %reinterpret_cast = memref.reinterpret_cast %arg0 to offset: [0], sizes: [%dim_0, %dim_2], strides: [%dim_2, 1] {kDiscSymbolicDimAttr = [@S0, @S1]} : memref<?x?xf32, #gpu.address_space<global>> to memref<?x?xf32, #gpu.address_space<global>>
+    %reinterpret_cast_3 = memref.reinterpret_cast %arg1 to offset: [0], sizes: [%dim_0, %dim_2], strides: [%dim_2, 1] {kDiscSymbolicDimAttr = [@S0, @S1]} : memref<?x?xf32, #gpu.address_space<global>> to memref<?x?xf32, #gpu.address_space<global>>
+    %reinterpret_cast_4 = memref.reinterpret_cast %arg2 to offset: [0], sizes: [%dim_0, %dim_2], strides: [%dim_2, 1] {kDiscSymbolicDimAttr = [@S0, @S1]} : memref<?x?xf32, #gpu.address_space<global>> to memref<?x?xf32, #gpu.address_space<global>>
+    %reinterpret_cast_5 = memref.reinterpret_cast %arg3 to offset: [0], sizes: [%dim_0, %dim_2], strides: [%dim_2, 1] {kDiscSymbolicDimAttr = [@S0, @S1]} : memref<?x?xf32, #gpu.address_space<global>> to memref<?x?xf32, #gpu.address_space<global>>
+    %reinterpret_cast_6 = memref.reinterpret_cast %arg5 to offset: [0], sizes: [%dim, %dim_1], strides: [%dim_1, 1] {kDiscSymbolicDimAttr = [@S2, @S3]} : memref<?x?xf32, #gpu.address_space<global>> to memref<?x?xf32, #gpu.address_space<global>>
+    "lmhlo.fusion"() ({
+      "lmhlo.abs"(%reinterpret_cast, %reinterpret_cast_3) : (memref<?x?xf32, #gpu.address_space<global>>, memref<?x?xf32, #gpu.address_space<global>>) -> ()
+      "lmhlo.add"(%reinterpret_cast_3, %reinterpret_cast_4, %reinterpret_cast_5) : (memref<?x?xf32, #gpu.address_space<global>>, memref<?x?xf32, #gpu.address_space<global>>, memref<?x?xf32, #gpu.address_space<global>>) -> ()
+      "lmhlo.terminator"() : () -> ()
+    }) {disc.device = "gpu", disc.fusion.name = "simple_multi_output_kloop_fusion_with_reorder_kLoop_abs_add__2_2_0", disc.fusion_type = "kLoop"} : () -> ()
+    "lmhlo.dynamic_broadcast_in_dim"(%reinterpret_cast_3, %arg4, %reinterpret_cast_6) {broadcast_dimensions = dense<[0, 1]> : tensor<2xi64>} : (memref<?x?xf32, #gpu.address_space<global>>, memref<2xindex>, memref<?x?xf32, #gpu.address_space<global>>) -> ()
+    return %reinterpret_cast_3, %reinterpret_cast_5, %reinterpret_cast_6 : memref<?x?xf32, #gpu.address_space<global>>, memref<?x?xf32, #gpu.address_space<global>>, memref<?x?xf32, #gpu.address_space<global>>
+  }
+  "disc_shape.SymbolicDim"() {knownNegativeOne = false, knownNonNegative = true, knownNonSizeOne = false, knownNonSizeZero = false, sym_name = "S0", value = -9223372036854775808 : i64} : () -> ()
+  "disc_shape.SymbolicDim"() {knownNegativeOne = false, knownNonNegative = true, knownNonSizeOne = false, knownNonSizeZero = false, sym_name = "S1", value = -9223372036854775808 : i64} : () -> ()
+  "disc_shape.SymbolicDim"() {knownNegativeOne = false, knownNonNegative = true, knownNonSizeOne = false, knownNonSizeZero = false, sym_name = "S2", value = -9223372036854775808 : i64} : () -> ()
+  "disc_shape.SymbolicDim"() {knownNegativeOne = false, knownNonNegative = true, knownNonSizeOne = false, knownNonSizeZero = false, sym_name = "S3", value = -9223372036854775808 : i64} : () -> ()
+  func.func @shape_constraint_graph() {
+    return
+  }
+}
+
+
+// -----
+module {
+  func.func @same_num_elements_multi_output_kloop_fusion(%arg0: memref<?x?xf32, #gpu.address_space<global>>, %arg1: memref<?x?xf32, #gpu.address_space<global>>, %arg2: memref<2xi64>, %arg3: memref<?x?x?xf32, #gpu.address_space<global>>, %arg4: memref<?x?x?xf32, #gpu.address_space<global>>, %arg5: memref<?x?x?xf32, #gpu.address_space<global>>) -> (memref<?x?xf32, #gpu.address_space<global>>, memref<?x?x?xf32, #gpu.address_space<global>>) {
+    %c0 = arith.constant 0 : index
+    %dim = memref.dim %arg3, %c0 : memref<?x?x?xf32, #gpu.address_space<global>>
+    %dim_0 = memref.dim %arg0, %c0 : memref<?x?xf32, #gpu.address_space<global>>
+    %c1 = arith.constant 1 : index
+    %dim_1 = memref.dim %arg3, %c1 : memref<?x?x?xf32, #gpu.address_space<global>>
+    %dim_2 = memref.dim %arg0, %c1 : memref<?x?xf32, #gpu.address_space<global>>
+    %c2 = arith.constant 2 : index
+    %dim_3 = memref.dim %arg3, %c2 : memref<?x?x?xf32, #gpu.address_space<global>>
+    %0 = arith.muli %dim_1, %dim_3 : index
+    %reinterpret_cast = memref.reinterpret_cast %arg0 to offset: [0], sizes: [%dim_0, %dim_2], strides: [%dim_2, 1] {kDiscSymbolicDimAttr = [@S0, @S1]} : memref<?x?xf32, #gpu.address_space<global>> to memref<?x?xf32, #gpu.address_space<global>>
+    %reinterpret_cast_4 = memref.reinterpret_cast %arg1 to offset: [0], sizes: [%dim_0, %dim_2], strides: [%dim_2, 1] {kDiscSymbolicDimAttr = [@S0, @S1]} : memref<?x?xf32, #gpu.address_space<global>> to memref<?x?xf32, #gpu.address_space<global>>
+    %reinterpret_cast_5 = memref.reinterpret_cast %arg3 to offset: [0], sizes: [%dim, %dim_1, %dim_3], strides: [%0, %dim_3, 1] {kDiscSymbolicDimAttr = [@S2, @S3, @S4]} : memref<?x?x?xf32, #gpu.address_space<global>> to memref<?x?x?xf32, #gpu.address_space<global>>
+    %reinterpret_cast_6 = memref.reinterpret_cast %arg4 to offset: [0], sizes: [%dim, %dim_1, %dim_3], strides: [%0, %dim_3, 1] {kDiscSymbolicDimAttr = [@S2, @S3, @S4]} : memref<?x?x?xf32, #gpu.address_space<global>> to memref<?x?x?xf32, #gpu.address_space<global>>
+    %reinterpret_cast_7 = memref.reinterpret_cast %arg5 to offset: [0], sizes: [%dim, %dim_1, %dim_3], strides: [%0, %dim_3, 1] {kDiscSymbolicDimAttr = [@S2, @S3, @S4]} : memref<?x?x?xf32, #gpu.address_space<global>> to memref<?x?x?xf32, #gpu.address_space<global>>
+    "lmhlo.fusion"() ({
+      "lmhlo.abs"(%reinterpret_cast, %reinterpret_cast_4) : (memref<?x?xf32, #gpu.address_space<global>>, memref<?x?xf32, #gpu.address_space<global>>) -> ()
+      "lmhlo.dynamic_reshape"(%reinterpret_cast_4, %arg2, %reinterpret_cast_5) : (memref<?x?xf32, #gpu.address_space<global>>, memref<2xi64>, memref<?x?x?xf32, #gpu.address_space<global>>) -> ()
+      "lmhlo.add"(%reinterpret_cast_5, %reinterpret_cast_6, %reinterpret_cast_7) : (memref<?x?x?xf32, #gpu.address_space<global>>, memref<?x?x?xf32, #gpu.address_space<global>>, memref<?x?x?xf32, #gpu.address_space<global>>) -> ()
+      "lmhlo.terminator"() : () -> ()
+    }) {disc.device = "gpu", disc.fusion.name = "same_num_elements_multi_output_kloop_fusion_kLoop_abs_add__3_2_0", disc.fusion_type = "kLoop"} : () -> ()
+    return %reinterpret_cast_4, %reinterpret_cast_7 : memref<?x?xf32, #gpu.address_space<global>>, memref<?x?x?xf32, #gpu.address_space<global>>
+  }
+  "disc_shape.SymbolicDim"() {knownNegativeOne = false, knownNonNegative = true, knownNonSizeOne = false, knownNonSizeZero = false, sym_name = "S0", value = -9223372036854775808 : i64} : () -> ()
+  "disc_shape.SymbolicDim"() {knownNegativeOne = false, knownNonNegative = true, knownNonSizeOne = false, knownNonSizeZero = false, sym_name = "S1", value = -9223372036854775808 : i64} : () -> ()
+  "disc_shape.SymbolicDim"() {knownNegativeOne = false, knownNonNegative = true, knownNonSizeOne = false, knownNonSizeZero = false, sym_name = "S2", value = -9223372036854775808 : i64} : () -> ()
+  "disc_shape.SymbolicDim"() {knownNegativeOne = false, knownNonNegative = true, knownNonSizeOne = false, knownNonSizeZero = false, sym_name = "S3", value = -9223372036854775808 : i64} : () -> ()
+  "disc_shape.SymbolicDim"() {knownNegativeOne = false, knownNonNegative = true, knownNonSizeOne = false, knownNonSizeZero = false, sym_name = "S4", value = -9223372036854775808 : i64} : () -> ()
+  func.func @shape_constraint_graph() {
+    %0 = "disc_shape.dim"() {name = @S0} : () -> index
+    %1 = "disc_shape.dim"() {name = @S1} : () -> index
+    %2 = "disc_shape.dim"() {name = @S2} : () -> index
+    %3 = "disc_shape.dim"() {name = @S3} : () -> index
+    %4 = "disc_shape.dim"() {name = @S4} : () -> index
+    "disc_shape.tie_product_equal"(%0, %1, %2, %3, %4) {operand_segment_sizes = array<i32: 2, 3>} : (index, index, index, index, index) -> ()
+    return
+  }
+}
+
+
+// -----
+module {
+  func.func @check_not_kloop_fusion(%arg0: memref<?x?xf32, #gpu.address_space<global>>, %arg1: memref<?x?xf32, #gpu.address_space<global>>, %arg2: memref<?x?xf32, #gpu.address_space<global>>, %arg3: memref<?x?xf32, #gpu.address_space<global>>) -> (memref<?x?xf32, #gpu.address_space<global>>, memref<?x?xf32, #gpu.address_space<global>>) {
+    "lmhlo.add"(%arg0, %arg0, %arg1) : (memref<?x?xf32, #gpu.address_space<global>>, memref<?x?xf32, #gpu.address_space<global>>, memref<?x?xf32, #gpu.address_space<global>>) -> ()
+    "lmhlo.subtract"(%arg2, %arg2, %arg3) : (memref<?x?xf32, #gpu.address_space<global>>, memref<?x?xf32, #gpu.address_space<global>>, memref<?x?xf32, #gpu.address_space<global>>) -> ()
+    return %arg1, %arg3 : memref<?x?xf32, #gpu.address_space<global>>, memref<?x?xf32, #gpu.address_space<global>>
+  }
+  func.func @shape_constraint_graph() {
+    return
+  }
+}
+
+
+// -----
+module {
+  func.func @const_should_not_be_output(%arg0: memref<f32, #gpu.address_space<global>>) -> (memref<f32, #gpu.address_space<global>>, memref<f32, #gpu.address_space<global>>) {
+    %alloc = memref.alloc() : memref<f32, #gpu.address_space<global>>
+    "lmhlo.constant"(%alloc) {value = dense<1.000000e+00> : tensor<f32, #gpu.address_space<global>>} : (memref<f32, #gpu.address_space<global>>) -> ()
+    %alloc_0 = memref.alloc() : memref<f32, #gpu.address_space<global>>
+    "lmhlo.add"(%arg0, %alloc, %alloc_0) : (memref<f32, #gpu.address_space<global>>, memref<f32, #gpu.address_space<global>>, memref<f32, #gpu.address_space<global>>) -> ()
+    return %alloc, %alloc_0 : memref<f32, #gpu.address_space<global>>, memref<f32, #gpu.address_space<global>>
+  }
+  func.func @shape_constraint_graph() {
+    return
+  }
+}
+
+
+// -----
+module {
+  func.func @simple_kloop_fusion_static_shape(%arg0: memref<10x11xf32, #gpu.address_space<global>>, %arg1: memref<10x11xf32, #gpu.address_space<global>>, %arg2: memref<10x11xf32, #gpu.address_space<global>>, %arg3: memref<10x11xf32, #gpu.address_space<global>>) -> memref<10x11xf32, #gpu.address_space<global>> {
+    "lmhlo.fusion"() ({
+      "lmhlo.abs"(%arg0, %arg1) : (memref<10x11xf32, #gpu.address_space<global>>, memref<10x11xf32, #gpu.address_space<global>>) -> ()
+      "lmhlo.add"(%arg1, %arg2, %arg3) : (memref<10x11xf32, #gpu.address_space<global>>, memref<10x11xf32, #gpu.address_space<global>>, memref<10x11xf32, #gpu.address_space<global>>) -> ()
+      "lmhlo.terminator"() : () -> ()
+    }) {disc.device = "gpu", disc.fusion.name = "simple_kloop_fusion_static_shape_kLoop_add__2_1_0", disc.fusion_type = "kLoop"} : () -> ()
+    return %arg3 : memref<10x11xf32, #gpu.address_space<global>>
+  }
+  func.func @shape_constraint_graph() {
+    return
+  }
+}
+
+
+// -----
+module {
+  func.func @kloop_fusion_with_dealloc(%arg0: memref<?x?xf32, #gpu.address_space<global>>, %arg1: memref<?x?xf32, #gpu.address_space<global>>) -> (memref<?x?xf32, #gpu.address_space<global>>, memref<?x?xf32, #gpu.address_space<global>>) {
+    %c0 = arith.constant 0 : index
+    %dim = memref.dim %arg0, %c0 : memref<?x?xf32, #gpu.address_space<global>>
+    %c1 = arith.constant 1 : index
+    %dim_0 = memref.dim %arg0, %c1 : memref<?x?xf32, #gpu.address_space<global>>
+    %reinterpret_cast = memref.reinterpret_cast %arg0 to offset: [0], sizes: [%dim, %dim_0], strides: [%dim_0, 1] {kDiscSymbolicDimAttr = [@S0, @S1]} : memref<?x?xf32, #gpu.address_space<global>> to memref<?x?xf32, #gpu.address_space<global>>
+    %reinterpret_cast_1 = memref.reinterpret_cast %arg1 to offset: [0], sizes: [%dim, %dim_0], strides: [%dim_0, 1] {kDiscSymbolicDimAttr = [@S0, @S1]} : memref<?x?xf32, #gpu.address_space<global>> to memref<?x?xf32, #gpu.address_space<global>>
+    %alloc = memref.alloc(%dim, %dim_0) {kDiscSymbolicDimAttr = [@S0, @S1]} : memref<?x?xf32, #gpu.address_space<global>>
+    %alloc_2 = memref.alloc(%dim, %dim_0) {kDiscSymbolicDimAttr = [@S0, @S1]} : memref<?x?xf32, #gpu.address_space<global>>
+    %alloc_3 = memref.alloc(%dim, %dim_0) {kDiscSymbolicDimAttr = [@S0, @S1]} : memref<?x?xf32, #gpu.address_space<global>>
+    %alloc_4 = memref.alloc(%dim, %dim_0) {kDiscSymbolicDimAttr = [@S0, @S1]} : memref<?x?xf32, #gpu.address_space<global>>
+    %alloc_5 = memref.alloc(%dim, %dim_0) {kDiscSymbolicDimAttr = [@S0, @S1]} : memref<?x?xf32, #gpu.address_space<global>>
+    "lmhlo.fusion"() ({
+      "lmhlo.add"(%reinterpret_cast, %reinterpret_cast_1, %alloc) : (memref<?x?xf32, #gpu.address_space<global>>, memref<?x?xf32, #gpu.address_space<global>>, memref<?x?xf32, #gpu.address_space<global>>) -> ()
+      "lmhlo.multiply"(%reinterpret_cast, %reinterpret_cast_1, %alloc_2) : (memref<?x?xf32, #gpu.address_space<global>>, memref<?x?xf32, #gpu.address_space<global>>, memref<?x?xf32, #gpu.address_space<global>>) -> ()
+      "lmhlo.abs"(%alloc, %alloc_3) : (memref<?x?xf32, #gpu.address_space<global>>, memref<?x?xf32, #gpu.address_space<global>>) -> ()
+      "lmhlo.abs"(%alloc_2, %alloc_4) : (memref<?x?xf32, #gpu.address_space<global>>, memref<?x?xf32, #gpu.address_space<global>>) -> ()
+      "lmhlo.multiply"(%alloc_3, %alloc_4, %alloc_5) : (memref<?x?xf32, #gpu.address_space<global>>, memref<?x?xf32, #gpu.address_space<global>>, memref<?x?xf32, #gpu.address_space<global>>) -> ()
+      "lmhlo.terminator"() : () -> ()
+    }) {disc.device = "gpu", disc.fusion.name = "kloop_fusion_with_dealloc_kLoop_abs_multiply__5_2_0", disc.fusion_type = "kLoop"} : () -> ()
+    memref.dealloc %alloc : memref<?x?xf32, #gpu.address_space<global>>
+    memref.dealloc %alloc_2 : memref<?x?xf32, #gpu.address_space<global>>
+    memref.dealloc %alloc_4 : memref<?x?xf32, #gpu.address_space<global>>
+    return %alloc_3, %alloc_5 : memref<?x?xf32, #gpu.address_space<global>>, memref<?x?xf32, #gpu.address_space<global>>
+  }
+  "disc_shape.SymbolicDim"() {knownNegativeOne = false, knownNonNegative = true, knownNonSizeOne = false, knownNonSizeZero = false, sym_name = "S0", value = -9223372036854775808 : i64} : () -> ()
+  "disc_shape.SymbolicDim"() {knownNegativeOne = false, knownNonNegative = true, knownNonSizeOne = false, knownNonSizeZero = false, sym_name = "S1", value = -9223372036854775808 : i64} : () -> ()
+  func.func @shape_constraint_graph() {
+    return
+  }
+}
+
+
+// -----
+module {
+  func.func @simple_kinput(%arg0: memref<?x?xf32, #gpu.address_space<global>>, %arg1: memref<?x?xf32, #gpu.address_space<global>>, %arg2: memref<?xf32, #gpu.address_space<global>>, %arg3: memref<f32, #gpu.address_space<global>>) -> memref<?xf32, #gpu.address_space<global>> {
+    %c0 = arith.constant 0 : index
+    %dim = memref.dim %arg0, %c0 : memref<?x?xf32, #gpu.address_space<global>>
+    %c1 = arith.constant 1 : index
+    %dim_0 = memref.dim %arg0, %c1 : memref<?x?xf32, #gpu.address_space<global>>
+    %reinterpret_cast = memref.reinterpret_cast %arg0 to offset: [0], sizes: [%dim, %dim_0], strides: [%dim_0, 1] {kDiscSymbolicDimAttr = [@S0, @S1]} : memref<?x?xf32, #gpu.address_space<global>> to memref<?x?xf32, #gpu.address_space<global>>
+    %reinterpret_cast_1 = memref.reinterpret_cast %arg1 to offset: [0], sizes: [%dim, %dim_0], strides: [%dim_0, 1] {kDiscSymbolicDimAttr = [@S0, @S1]} : memref<?x?xf32, #gpu.address_space<global>> to memref<?x?xf32, #gpu.address_space<global>>
+    %reinterpret_cast_2 = memref.reinterpret_cast %arg2 to offset: [0], sizes: [%dim_0], strides: [1] {kDiscSymbolicDimAttr = [@S1]} : memref<?xf32, #gpu.address_space<global>> to memref<?xf32, #gpu.address_space<global>>
+    "lmhlo.fusion"() ({
+      "lmhlo.abs"(%reinterpret_cast, %reinterpret_cast_1) : (memref<?x?xf32, #gpu.address_space<global>>, memref<?x?xf32, #gpu.address_space<global>>) -> ()
+      "lmhlo.reduce"(%reinterpret_cast_1, %arg3, %reinterpret_cast_2) ({
+      ^bb0(%arg4: memref<f32, #gpu.address_space<global>>, %arg5: memref<f32, #gpu.address_space<global>>, %arg6: memref<f32, #gpu.address_space<global>>):
+        "lmhlo.add"(%arg4, %arg5, %arg6) : (memref<f32, #gpu.address_space<global>>, memref<f32, #gpu.address_space<global>>, memref<f32, #gpu.address_space<global>>) -> ()
+        "lmhlo.terminator"() : () -> ()
+      }) {dimensions = dense<0> : tensor<1xi64>} : (memref<?x?xf32, #gpu.address_space<global>>, memref<f32, #gpu.address_space<global>>, memref<?xf32, #gpu.address_space<global>>) -> ()
+      "lmhlo.terminator"() : () -> ()
+    }) {disc.device = "gpu", disc.fusion.name = "simple_kinput_kColReduction_reduce__2_1_0", disc.fusion_type = "kColReduction"} : () -> ()
+    return %reinterpret_cast_2 : memref<?xf32, #gpu.address_space<global>>
+  }
+  "disc_shape.SymbolicDim"() {knownNegativeOne = false, knownNonNegative = true, knownNonSizeOne = false, knownNonSizeZero = false, sym_name = "S0", value = -9223372036854775808 : i64} : () -> ()
+  "disc_shape.SymbolicDim"() {knownNegativeOne = false, knownNonNegative = true, knownNonSizeOne = false, knownNonSizeZero = false, sym_name = "S1", value = -9223372036854775808 : i64} : () -> ()
+  func.func @shape_constraint_graph() {
+    return
+  }
+}
+
+
+// -----
+module {
+  func.func @multi_outputs_kinput(%arg0: memref<?x?xf32, #gpu.address_space<global>>, %arg1: memref<?x?xf32, #gpu.address_space<global>>, %arg2: memref<?xf32, #gpu.address_space<global>>, %arg3: memref<f32, #gpu.address_space<global>>) -> (memref<?x?xf32, #gpu.address_space<global>>, memref<?xf32, #gpu.address_space<global>>) {
+    %c0 = arith.constant 0 : index
+    %dim = memref.dim %arg0, %c0 : memref<?x?xf32, #gpu.address_space<global>>
+    %c1 = arith.constant 1 : index
+    %dim_0 = memref.dim %arg0, %c1 : memref<?x?xf32, #gpu.address_space<global>>
+    %reinterpret_cast = memref.reinterpret_cast %arg0 to offset: [0], sizes: [%dim, %dim_0], strides: [%dim_0, 1] {kDiscSymbolicDimAttr = [@S0, @S1]} : memref<?x?xf32, #gpu.address_space<global>> to memref<?x?xf32, #gpu.address_space<global>>
+    %reinterpret_cast_1 = memref.reinterpret_cast %arg1 to offset: [0], sizes: [%dim, %dim_0], strides: [%dim_0, 1] {kDiscSymbolicDimAttr = [@S0, @S1]} : memref<?x?xf32, #gpu.address_space<global>> to memref<?x?xf32, #gpu.address_space<global>>
+    %reinterpret_cast_2 = memref.reinterpret_cast %arg2 to offset: [0], sizes: [%dim_0], strides: [1] {kDiscSymbolicDimAttr = [@S1]} : memref<?xf32, #gpu.address_space<global>> to memref<?xf32, #gpu.address_space<global>>
+    "lmhlo.fusion"() ({
+      "lmhlo.abs"(%reinterpret_cast, %reinterpret_cast_1) : (memref<?x?xf32, #gpu.address_space<global>>, memref<?x?xf32, #gpu.address_space<global>>) -> ()
+      "lmhlo.reduce"(%reinterpret_cast_1, %arg3, %reinterpret_cast_2) ({
+      ^bb0(%arg4: memref<f32, #gpu.address_space<global>>, %arg5: memref<f32, #gpu.address_space<global>>, %arg6: memref<f32, #gpu.address_space<global>>):
+        "lmhlo.add"(%arg4, %arg5, %arg6) : (memref<f32, #gpu.address_space<global>>, memref<f32, #gpu.address_space<global>>, memref<f32, #gpu.address_space<global>>) -> ()
+        "lmhlo.terminator"() : () -> ()
+      }) {dimensions = dense<0> : tensor<1xi64>} : (memref<?x?xf32, #gpu.address_space<global>>, memref<f32, #gpu.address_space<global>>, memref<?xf32, #gpu.address_space<global>>) -> ()
+      "lmhlo.terminator"() : () -> ()
+    }) {disc.device = "gpu", disc.fusion.name = "multi_outputs_kinput_kColReduction_abs_reduce__2_2_0", disc.fusion_type = "kColReduction"} : () -> ()
+    return %reinterpret_cast_1, %reinterpret_cast_2 : memref<?x?xf32, #gpu.address_space<global>>, memref<?xf32, #gpu.address_space<global>>
+  }
+  "disc_shape.SymbolicDim"() {knownNegativeOne = false, knownNonNegative = true, knownNonSizeOne = false, knownNonSizeZero = false, sym_name = "S0", value = -9223372036854775808 : i64} : () -> ()
+  "disc_shape.SymbolicDim"() {knownNegativeOne = false, knownNonNegative = true, knownNonSizeOne = false, knownNonSizeZero = false, sym_name = "S1", value = -9223372036854775808 : i64} : () -> ()
+  func.func @shape_constraint_graph() {
+    return
+  }
+}
+
+
+// -----
+module {
+  func.func @row_red_and_row_red_kinput(%arg0: memref<?x?xf32, #gpu.address_space<global>>, %arg1: memref<?x?xf32, #gpu.address_space<global>>, %arg2: memref<?x?xf32, #gpu.address_space<global>>, %arg3: memref<?xf32, #gpu.address_space<global>>, %arg4: memref<?xf32, #gpu.address_space<global>>, %arg5: memref<?x?xf32, #gpu.address_space<global>>, %arg6: memref<f32, #gpu.address_space<global>>) -> (memref<?xf32, #gpu.address_space<global>>, memref<?xf32, #gpu.address_space<global>>) {
+    %c0 = arith.constant 0 : index
+    %dim = memref.dim %arg0, %c0 : memref<?x?xf32, #gpu.address_space<global>>
+    %c1 = arith.constant 1 : index
+    %dim_0 = memref.dim %arg0, %c1 : memref<?x?xf32, #gpu.address_space<global>>
+    %reinterpret_cast = memref.reinterpret_cast %arg0 to offset: [0], sizes: [%dim, %dim_0], strides: [%dim_0, 1] {kDiscSymbolicDimAttr = [@S0, @S1]} : memref<?x?xf32, #gpu.address_space<global>> to memref<?x?xf32, #gpu.address_space<global>>
+    %reinterpret_cast_1 = memref.reinterpret_cast %arg1 to offset: [0], sizes: [%dim, %dim_0], strides: [%dim_0, 1] {kDiscSymbolicDimAttr = [@S0, @S1]} : memref<?x?xf32, #gpu.address_space<global>> to memref<?x?xf32, #gpu.address_space<global>>
+    %reinterpret_cast_2 = memref.reinterpret_cast %arg2 to offset: [0], sizes: [%dim, %dim_0], strides: [%dim_0, 1] {kDiscSymbolicDimAttr = [@S0, @S1]} : memref<?x?xf32, #gpu.address_space<global>> to memref<?x?xf32, #gpu.address_space<global>>
+    %reinterpret_cast_3 = memref.reinterpret_cast %arg3 to offset: [0], sizes: [%dim_0], strides: [1] {kDiscSymbolicDimAttr = [@S0]} : memref<?xf32, #gpu.address_space<global>> to memref<?xf32, #gpu.address_space<global>>
+    %reinterpret_cast_4 = memref.reinterpret_cast %arg4 to offset: [0], sizes: [%dim_0], strides: [1] {kDiscSymbolicDimAttr = [@S0]} : memref<?xf32, #gpu.address_space<global>> to memref<?xf32, #gpu.address_space<global>>
+    %reinterpret_cast_5 = memref.reinterpret_cast %arg5 to offset: [0], sizes: [%dim, %dim_0], strides: [%dim_0, 1] {kDiscSymbolicDimAttr = [@S0, @S1]} : memref<?x?xf32, #gpu.address_space<global>> to memref<?x?xf32, #gpu.address_space<global>>
+    "lmhlo.fusion"() ({
+      "lmhlo.add"(%reinterpret_cast, %reinterpret_cast_1, %reinterpret_cast_2) : (memref<?x?xf32, #gpu.address_space<global>>, memref<?x?xf32, #gpu.address_space<global>>, memref<?x?xf32, #gpu.address_space<global>>) -> ()
+      "lmhlo.abs"(%reinterpret_cast_2, %reinterpret_cast_5) : (memref<?x?xf32, #gpu.address_space<global>>, memref<?x?xf32, #gpu.address_space<global>>) -> ()
+      "lmhlo.reduce"(%reinterpret_cast_5, %arg6, %reinterpret_cast_3) ({
+      ^bb0(%arg7: memref<f32, #gpu.address_space<global>>, %arg8: memref<f32, #gpu.address_space<global>>, %arg9: memref<f32, #gpu.address_space<global>>):
+        "lmhlo.add"(%arg7, %arg8, %arg9) : (memref<f32, #gpu.address_space<global>>, memref<f32, #gpu.address_space<global>>, memref<f32, #gpu.address_space<global>>) -> ()
+        "lmhlo.terminator"() : () -> ()
+      }) {dimensions = dense<1> : tensor<1xi64>} : (memref<?x?xf32, #gpu.address_space<global>>, memref<f32, #gpu.address_space<global>>, memref<?xf32, #gpu.address_space<global>>) -> ()
+      "lmhlo.reduce"(%reinterpret_cast_2, %arg6, %reinterpret_cast_4) ({
+      ^bb0(%arg7: memref<f32, #gpu.address_space<global>>, %arg8: memref<f32, #gpu.address_space<global>>, %arg9: memref<f32, #gpu.address_space<global>>):
+        "lmhlo.add"(%arg7, %arg8, %arg9) : (memref<f32, #gpu.address_space<global>>, memref<f32, #gpu.address_space<global>>, memref<f32, #gpu.address_space<global>>) -> ()
+        "lmhlo.terminator"() : () -> ()
+      }) {dimensions = dense<1> : tensor<1xi64>} : (memref<?x?xf32, #gpu.address_space<global>>, memref<f32, #gpu.address_space<global>>, memref<?xf32, #gpu.address_space<global>>) -> ()
+      "lmhlo.terminator"() : () -> ()
+    }) {disc.device = "gpu", disc.fusion.name = "row_red_and_row_red_kinput_kRowReduction_reduce_reduce__4_2_0", disc.fusion_type = "kRowReduction"} : () -> ()
+    return %reinterpret_cast_3, %reinterpret_cast_4 : memref<?xf32, #gpu.address_space<global>>, memref<?xf32, #gpu.address_space<global>>
+  }
+  "disc_shape.SymbolicDim"() {knownNegativeOne = false, knownNonNegative = true, knownNonSizeOne = false, knownNonSizeZero = false, sym_name = "S0", value = -9223372036854775808 : i64} : () -> ()
+  "disc_shape.SymbolicDim"() {knownNegativeOne = false, knownNonNegative = true, knownNonSizeOne = false, knownNonSizeZero = false, sym_name = "S1", value = -9223372036854775808 : i64} : () -> ()
+  func.func @shape_constraint_graph() {
+    return
+  }
+}
+
+
+// -----
+module {
+  func.func @row_red_and_col_red_kinput(%arg0: memref<?x?xf32, #gpu.address_space<global>>, %arg1: memref<?x?xf32, #gpu.address_space<global>>, %arg2: memref<?x?xf32, #gpu.address_space<global>>, %arg3: memref<?xf32, #gpu.address_space<global>>, %arg4: memref<?xf32, #gpu.address_space<global>>, %arg5: memref<?x?xf32, #gpu.address_space<global>>, %arg6: memref<f32, #gpu.address_space<global>>) -> (memref<?xf32, #gpu.address_space<global>>, memref<?xf32, #gpu.address_space<global>>) {
+    %c0 = arith.constant 0 : index
+    %dim = memref.dim %arg0, %c0 : memref<?x?xf32, #gpu.address_space<global>>
+    %c1 = arith.constant 1 : index
+    %dim_0 = memref.dim %arg0, %c1 : memref<?x?xf32, #gpu.address_space<global>>
+    %reinterpret_cast = memref.reinterpret_cast %arg0 to offset: [0], sizes: [%dim, %dim_0], strides: [%dim_0, 1] {kDiscSymbolicDimAttr = [@S0, @S1]} : memref<?x?xf32, #gpu.address_space<global>> to memref<?x?xf32, #gpu.address_space<global>>
+    %reinterpret_cast_1 = memref.reinterpret_cast %arg1 to offset: [0], sizes: [%dim, %dim_0], strides: [%dim_0, 1] {kDiscSymbolicDimAttr = [@S0, @S1]} : memref<?x?xf32, #gpu.address_space<global>> to memref<?x?xf32, #gpu.address_space<global>>
+    %reinterpret_cast_2 = memref.reinterpret_cast %arg2 to offset: [0], sizes: [%dim, %dim_0], strides: [%dim_0, 1] {kDiscSymbolicDimAttr = [@S0, @S1]} : memref<?x?xf32, #gpu.address_space<global>> to memref<?x?xf32, #gpu.address_space<global>>
+    %reinterpret_cast_3 = memref.reinterpret_cast %arg3 to offset: [0], sizes: [%dim_0], strides: [1] {kDiscSymbolicDimAttr = [@S0]} : memref<?xf32, #gpu.address_space<global>> to memref<?xf32, #gpu.address_space<global>>
+    %reinterpret_cast_4 = memref.reinterpret_cast %arg4 to offset: [0], sizes: [%dim_0], strides: [1] {kDiscSymbolicDimAttr = [@S1]} : memref<?xf32, #gpu.address_space<global>> to memref<?xf32, #gpu.address_space<global>>
+    %reinterpret_cast_5 = memref.reinterpret_cast %arg5 to offset: [0], sizes: [%dim, %dim_0], strides: [%dim_0, 1] {kDiscSymbolicDimAttr = [@S0, @S1]} : memref<?x?xf32, #gpu.address_space<global>> to memref<?x?xf32, #gpu.address_space<global>>
+    "lmhlo.fusion"() ({
+      "lmhlo.add"(%reinterpret_cast, %reinterpret_cast_1, %reinterpret_cast_2) : (memref<?x?xf32, #gpu.address_space<global>>, memref<?x?xf32, #gpu.address_space<global>>, memref<?x?xf32, #gpu.address_space<global>>) -> ()
+      "lmhlo.abs"(%reinterpret_cast_2, %reinterpret_cast_5) : (memref<?x?xf32, #gpu.address_space<global>>, memref<?x?xf32, #gpu.address_space<global>>) -> ()
+      "lmhlo.reduce"(%reinterpret_cast_5, %arg6, %reinterpret_cast_3) ({
+      ^bb0(%arg7: memref<f32, #gpu.address_space<global>>, %arg8: memref<f32, #gpu.address_space<global>>, %arg9: memref<f32, #gpu.address_space<global>>):
+        "lmhlo.add"(%arg7, %arg8, %arg9) : (memref<f32, #gpu.address_space<global>>, memref<f32, #gpu.address_space<global>>, memref<f32, #gpu.address_space<global>>) -> ()
+        "lmhlo.terminator"() : () -> ()
+      }) {dimensions = dense<1> : tensor<1xi64>} : (memref<?x?xf32, #gpu.address_space<global>>, memref<f32, #gpu.address_space<global>>, memref<?xf32, #gpu.address_space<global>>) -> ()
+      "lmhlo.terminator"() : () -> ()
+    }) {disc.device = "gpu", disc.fusion.name = "row_red_and_col_red_kinput_kRowReduction_add_reduce__3_2_0", disc.fusion_type = "kRowReduction"} : () -> ()
+    "lmhlo.reduce"(%reinterpret_cast_2, %arg6, %reinterpret_cast_4) ({
+    ^bb0(%arg7: memref<f32, #gpu.address_space<global>>, %arg8: memref<f32, #gpu.address_space<global>>, %arg9: memref<f32, #gpu.address_space<global>>):
+      "lmhlo.add"(%arg7, %arg8, %arg9) : (memref<f32, #gpu.address_space<global>>, memref<f32, #gpu.address_space<global>>, memref<f32, #gpu.address_space<global>>) -> ()
+      "lmhlo.terminator"() : () -> ()
+    }) {dimensions = dense<0> : tensor<1xi64>} : (memref<?x?xf32, #gpu.address_space<global>>, memref<f32, #gpu.address_space<global>>, memref<?xf32, #gpu.address_space<global>>) -> ()
+    return %reinterpret_cast_3, %reinterpret_cast_4 : memref<?xf32, #gpu.address_space<global>>, memref<?xf32, #gpu.address_space<global>>
+  }
+  "disc_shape.SymbolicDim"() {knownNegativeOne = false, knownNonNegative = true, knownNonSizeOne = false, knownNonSizeZero = false, sym_name = "S0", value = -9223372036854775808 : i64} : () -> ()
+  "disc_shape.SymbolicDim"() {knownNegativeOne = false, knownNonNegative = true, knownNonSizeOne = false, knownNonSizeZero = false, sym_name = "S1", value = -9223372036854775808 : i64} : () -> ()
+  func.func @shape_constraint_graph() {
+    return
+  }
+}
+
+
+// -----
+module {
+  func.func @reduce_should_not_have_consumer_in_the_fusion(%arg0: memref<?x?xf32, #gpu.address_space<global>>, %arg1: memref<?x?xf32, #gpu.address_space<global>>) -> (memref<?x?xf32, #gpu.address_space<global>>, memref<?xf32, #gpu.address_space<global>>) {
+    %c0 = arith.constant 0 : index
+    %dim = memref.dim %arg0, %c0 : memref<?x?xf32, #gpu.address_space<global>>
+    %c1 = arith.constant 1 : index
+    %dim_0 = memref.dim %arg0, %c1 : memref<?x?xf32, #gpu.address_space<global>>
+    %reinterpret_cast = memref.reinterpret_cast %arg0 to offset: [0], sizes: [%dim, %dim_0], strides: [%dim_0, 1] {kDiscSymbolicDimAttr = [@S0, @S1]} : memref<?x?xf32, #gpu.address_space<global>> to memref<?x?xf32, #gpu.address_space<global>>
+    %reinterpret_cast_1 = memref.reinterpret_cast %arg1 to offset: [0], sizes: [%dim, %dim_0], strides: [%dim_0, 1] {kDiscSymbolicDimAttr = [@S0, @S1]} : memref<?x?xf32, #gpu.address_space<global>> to memref<?x?xf32, #gpu.address_space<global>>
+    %alloc = memref.alloc(%dim, %dim_0) {kDiscSymbolicDimAttr = [@S0, @S1]} : memref<?x?xf32, #gpu.address_space<global>>
+    %alloc_2 = memref.alloc(%dim, %dim_0) {kDiscSymbolicDimAttr = [@S0, @S1]} : memref<?x?xf32, #gpu.address_space<global>>
+    %alloc_3 = memref.alloc() : memref<f32, #gpu.address_space<global>>
+    %alloc_4 = memref.alloc(%dim) : memref<?xf32, #gpu.address_space<global>>
+    "lmhlo.fusion"() ({
+      "lmhlo.add"(%reinterpret_cast, %reinterpret_cast_1, %alloc) : (memref<?x?xf32, #gpu.address_space<global>>, memref<?x?xf32, #gpu.address_space<global>>, memref<?x?xf32, #gpu.address_space<global>>) -> ()
+      "lmhlo.subtract"(%reinterpret_cast, %alloc, %alloc_2) : (memref<?x?xf32, #gpu.address_space<global>>, memref<?x?xf32, #gpu.address_space<global>>, memref<?x?xf32, #gpu.address_space<global>>) -> ()
+      "lmhlo.constant"(%alloc_3) {value = dense<0.000000e+00> : tensor<f32, #gpu.address_space<global>>} : (memref<f32, #gpu.address_space<global>>) -> ()
+      "lmhlo.reduce"(%alloc_2, %alloc_3, %alloc_4) ({
+      ^bb0(%arg2: memref<f32, #gpu.address_space<global>>, %arg3: memref<f32, #gpu.address_space<global>>, %arg4: memref<f32, #gpu.address_space<global>>):
+        "lmhlo.add"(%arg2, %arg3, %arg4) : (memref<f32, #gpu.address_space<global>>, memref<f32, #gpu.address_space<global>>, memref<f32, #gpu.address_space<global>>) -> ()
+        "lmhlo.terminator"() : () -> ()
+      }) {dimensions = dense<1> : tensor<1xi64>} : (memref<?x?xf32, #gpu.address_space<global>>, memref<f32, #gpu.address_space<global>>, memref<?xf32, #gpu.address_space<global>>) -> ()
+      "lmhlo.terminator"() : () -> ()
+    }) {disc.device = "gpu", disc.fusion.name = "reduce_should_not_have_consumer_in_the_fusion_kRowReduction_subtract_reduce__4_2_0", disc.fusion_type = "kRowReduction"} : () -> ()
+    memref.dealloc %alloc : memref<?x?xf32, #gpu.address_space<global>>
+    memref.dealloc %alloc_3 : memref<f32, #gpu.address_space<global>>
+    %alloc_5 = memref.alloc(%dim) : memref<?xf32, #gpu.address_space<global>>
+    "lmhlo.add"(%alloc_4, %alloc_4, %alloc_5) : (memref<?xf32, #gpu.address_space<global>>, memref<?xf32, #gpu.address_space<global>>, memref<?xf32, #gpu.address_space<global>>) -> ()
+    memref.dealloc %alloc_4 : memref<?xf32, #gpu.address_space<global>>
+    return %alloc_2, %alloc_5 : memref<?x?xf32, #gpu.address_space<global>>, memref<?xf32, #gpu.address_space<global>>
+  }
+  "disc_shape.SymbolicDim"() {knownNegativeOne = false, knownNonNegative = true, knownNonSizeOne = false, knownNonSizeZero = false, sym_name = "S0", value = -9223372036854775808 : i64} : () -> ()
+  "disc_shape.SymbolicDim"() {knownNegativeOne = false, knownNonNegative = true, knownNonSizeOne = false, knownNonSizeZero = false, sym_name = "S1", value = -9223372036854775808 : i64} : () -> ()
+  func.func @shape_constraint_graph() {
+    return
+  }
+}
+
+
+// -----
+module {
+  func.func @kstitch_fusion_mean(%arg0: memref<?x?x?xf32, #gpu.address_space<global>>) -> memref<?x?xf32, #gpu.address_space<global>> attributes {tf.entry_function = {input_placements = "gpu", inputs = "input0", output_placements = "gpu", outputs = "output0"}} {
+    %c0 = arith.constant 0 : index
+    %dim = memref.dim %arg0, %c0 : memref<?x?x?xf32, #gpu.address_space<global>>
+    %c1 = arith.constant 1 : index
+    %dim_0 = memref.dim %arg0, %c1 : memref<?x?x?xf32, #gpu.address_space<global>>
+    %c2 = arith.constant 2 : index
+    %dim_1 = memref.dim %arg0, %c2 : memref<?x?x?xf32, #gpu.address_space<global>>
+    %alloc = memref.alloc() : memref<f32, #gpu.address_space<global>>
+    %0 = arith.muli %dim_0, %dim_1 : index
+    %reinterpret_cast = memref.reinterpret_cast %arg0 to offset: [0], sizes: [%dim, %dim_0, %dim_1], strides: [%0, %dim_1, 1] {kDiscSymbolicDimAttr = [@S0, @S1, @S2]} : memref<?x?x?xf32, #gpu.address_space<global>> to memref<?x?x?xf32, #gpu.address_space<global>>
+    %alloca = memref.alloca() : memref<2xindex>
+    %1 = arith.muli %dim, %dim_0 : index
+    memref.store %1, %alloca[%c0] : memref<2xindex>
+    memref.store %dim_1, %alloca[%c1] : memref<2xindex>
+    %alloc_2 = memref.alloc(%1, %dim_1) {kDiscSymbolicDimAttr = [@S3, @S2]} : memref<?x?xf32, #gpu.address_space<global>>
+    %alloc_3 = memref.alloc(%1) {kDiscSymbolicDimAttr = [@S0]} : memref<?xf32, #gpu.address_space<global>>
+    "lmhlo.fusion"() ({
+      "lmhlo.constant"(%alloc) {value = dense<0.000000e+00> : tensor<f32>} : (memref<f32, #gpu.address_space<global>>) -> ()
+      "lmhlo.dynamic_reshape"(%reinterpret_cast, %alloca, %alloc_2) {disc.device = "gpu"} : (memref<?x?x?xf32, #gpu.address_space<global>>, memref<2xindex>, memref<?x?xf32, #gpu.address_space<global>>) -> ()
+      "lmhlo.reduce"(%alloc_2, %alloc, %alloc_3) ({
+      ^bb0(%arg1: memref<f32>, %arg2: memref<f32>, %arg3: memref<f32>):
+        "lmhlo.add"(%arg1, %arg2, %arg3) {disc.device = "gpu"} : (memref<f32>, memref<f32>, memref<f32>) -> ()
+        "lmhlo.terminator"() : () -> ()
+      }) {dimensions = dense<1> : tensor<1xi64>, disc.device = "gpu"} : (memref<?x?xf32, #gpu.address_space<global>>, memref<f32, #gpu.address_space<global>>, memref<?xf32, #gpu.address_space<global>>) -> ()
+      "lmhlo.terminator"() : () -> ()
+    }) {disc.device = "gpu", disc.fusion.name = "kstitch_fusion_mean_kRowReduction_reduce__3_1_0", disc.fusion_type = "kRowReduction"} : () -> ()
+    %alloca_4 = memref.alloca() : memref<2xindex>
+    memref.store %dim, %alloca_4[%c0] : memref<2xindex>
+    memref.store %dim_0, %alloca_4[%c1] : memref<2xindex>
+    %alloc_5 = memref.alloc(%dim, %dim_0) : memref<?x?xf32, #gpu.address_space<global>>
+    %alloca_6 = memref.alloca() : memref<1xi64>
+    %2 = arith.index_cast %dim_1 : index to i64
+    memref.store %2, %alloca_6[%c0] : memref<1xi64>
+    %alloc_7 = memref.alloc() : memref<1xi64, #gpu.address_space<global>>
+    %alloc_8 = memref.alloc() : memref<i64, #gpu.address_space<global>>
+    %alloc_9 = memref.alloc() : memref<f32, #gpu.address_space<global>>
+    %alloc_10 = memref.alloc(%dim, %dim_0) {kDiscSymbolicDimAttr = [@S0, @S1]} : memref<?x?xf32, #gpu.address_space<global>>
+    %alloc_11 = memref.alloc(%dim, %dim_0) {kDiscSymbolicDimAttr = [@S0, @S1]} : memref<?x?xf32, #gpu.address_space<global>>
+    "lmhlo.fusion"() ({
+      "lmhlo.dynamic_reshape"(%alloc_3, %alloca_4, %alloc_5) {disc.device = "gpu"} : (memref<?xf32, #gpu.address_space<global>>, memref<2xindex>, memref<?x?xf32, #gpu.address_space<global>>) -> ()
+      "lmhlo_disc.h2d"(%alloca_6, %alloc_7) : (memref<1xi64>, memref<1xi64, #gpu.address_space<global>>) -> ()
+      "lmhlo.reshape"(%alloc_7, %alloc_8) {disc.device = "gpu"} : (memref<1xi64, #gpu.address_space<global>>, memref<i64, #gpu.address_space<global>>) -> ()
+      "lmhlo.convert"(%alloc_8, %alloc_9) {disc.device = "gpu"} : (memref<i64, #gpu.address_space<global>>, memref<f32, #gpu.address_space<global>>) -> ()
+      "lmhlo.dynamic_broadcast_in_dim"(%alloc_9, %alloca_4, %alloc_10) {broadcast_dimensions = dense<> : tensor<0xi64>, disc.device = "gpu"} : (memref<f32, #gpu.address_space<global>>, memref<2xindex>, memref<?x?xf32, #gpu.address_space<global>>) -> ()
+      "lmhlo.divide"(%alloc_5, %alloc_10, %alloc_11) {disc.device = "gpu"} : (memref<?x?xf32, #gpu.address_space<global>>, memref<?x?xf32, #gpu.address_space<global>>, memref<?x?xf32, #gpu.address_space<global>>) -> ()
+      "lmhlo.terminator"() : () -> ()
+    }) {disc.device = "gpu", disc.fusion.name = "kstitch_fusion_mean_kLoop_divide__6_1_0", disc.fusion_type = "kLoop"} : () -> ()
+    return %alloc_11 : memref<?x?xf32, #gpu.address_space<global>>
+  }
+  "disc_shape.SymbolicDim"() {knownNegativeOne = false, knownNonNegative = true, knownNonSizeOne = false, knownNonSizeZero = false, sym_name = "S0", value = -9223372036854775808 : i64} : () -> ()
+  "disc_shape.SymbolicDim"() {knownNegativeOne = false, knownNonNegative = true, knownNonSizeOne = false, knownNonSizeZero = false, sym_name = "S1", value = -9223372036854775808 : i64} : () -> ()
+  "disc_shape.SymbolicDim"() {knownNegativeOne = false, knownNonNegative = true, knownNonSizeOne = false, knownNonSizeZero = false, sym_name = "S2", value = -9223372036854775808 : i64} : () -> ()
+  "disc_shape.SymbolicDim"() {knownNegativeOne = false, knownNonNegative = true, knownNonSizeOne = false, knownNonSizeZero = false, sym_name = "S3", value = -9223372036854775808 : i64} : () -> ()
+  func.func @shape_constraint_graph() {
+    %0 = "disc_shape.dim"() {name = @S3} : () -> index
+    %1 = "disc_shape.dim"() {name = @S0} : () -> index
+    %2 = "disc_shape.dim"() {name = @S1} : () -> index
+    "disc_shape.tie_product_equal"(%0, %1, %2) {operand_segment_sizes = array<i32: 1, 2>} : (index, index, index) -> ()
+    return
+  }
+}
+
