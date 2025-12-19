@@ -9,6 +9,8 @@ export HF_ENDPOINT=https://hf-mirror.com
 export TORCH_BLADE_DEBUG_LOG=on
 export DISC_ENABLE_STITCH=true
 
+export DEBUG=1
+
 # Python bin path
 export PYTHON_BIN_PATH=$(which python)
 

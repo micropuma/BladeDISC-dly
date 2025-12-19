@@ -34,3 +34,5 @@ pytorch_blade/dump_dir
 
 *.pt  
 tutorial/*/dump_dir
+
+dump_dir/
