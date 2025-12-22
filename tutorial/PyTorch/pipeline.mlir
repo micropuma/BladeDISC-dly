@@ -60,9 +60,9 @@ module {
 %from_elements_9 = tensor.from_elements %7, %11 : tensor<2xindex>
 
 // 做CSE，这里引入tie_shape来显示将shape信息绑定到tensor上
-%29 = mhlo.add %26, %28 : tensor<?x10xf32>
-%30 = "disc_shape.tie_shape"(%29, %dim, %c10) : (tensor<?x10xf32>, index, index) -> tensor<?x10xf32>
-即显示绑定%30的shape是[%dim, %c10]
+// %29 = mhlo.add %26, %28 : tensor<?x10xf32>
+// %30 = "disc_shape.tie_shape"(%29, %dim, %c10) : (tensor<?x10xf32>, index, index) -> tensor<?x10xf32>
+// 即显示绑定%30的shape是[%dim, %c10]
 
 // -----// IR Dump After DiscShapeOptimizationPass (disc-shape-optimization) //----- //
 // TODO(leon):重点dump这个pass  
@@ -197,6 +197,7 @@ func.func @main(%arg0: memref<?x10xf32>) -> memref<?x10xf32> attributes {tf.entr
 // -----// IR Dump After DiscLhloLegalizeRootsToParallelLoopsPass (disc-lhlo-legalize-roots-to-parallel-loops) //----- //
 // -----// IR Dump After InputInlineFusionPass (disc-input-inline-fusion) //----- //
 
+// -----// IR Dump After ParallelLoopCollapsing //----- //
 // -----// IR Dump After SCFParallelLoopTiling (disc-parallel-loop-tiling) //----- //
 // -----// IR Dump After GpuMapParallelLoopsPass (gpu-map-parallel-loops) //----- //
 // -----// IR Dump After ConvertParallelLoopToGpu (convert-parallel-loops-to-gpu) //----- //
